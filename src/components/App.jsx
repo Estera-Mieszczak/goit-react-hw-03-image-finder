@@ -4,6 +4,7 @@ import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { Button } from "./Button/Button";
 import { Loader } from "./Loader/Loader"
 import { Searchbar } from "./Searchbar/Searchbar";
+import { Modal } from "./Modal/Modal";
 import css from "./App.module.css";
 // import { Modal } from "./Modal/Modal"
 
@@ -16,7 +17,10 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
-  const [ searchPhoto, setSearchPhoto ] = useState('')
+  const [searchPhoto, setSearchPhoto] = useState('')
+  const [clicked, setClicked] = useState(false)
+  const [alt, setAlt] = useState()
+  const [ src, setSrc ] = useState()
 
   useEffect(() => {
     setCurrentPage(1);
@@ -30,17 +34,35 @@ export const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsLoading(true);
     setPhotos([]);
     getInitialData();
     handleCurrentPageUpdate();
-    
+    form.reset()
   }
 
   const handleChange = (event) => {
     const { value } = event.target
 
     setSearchPhoto(value)
+  }
+
+  const handleClick = () => { 
+    handleCurrentPageUpdate()
+    getInitialData()
+  }
+
+  const handleOpen = event => {
+    setClicked(true);
+    const alt = event.target.alt;
+    const src = event.target.getAttribute('srcset');
+    setAlt(alt);
+    setSrc(src);
+  };
+
+  const handleClose = event => {
+    setClicked(false)
   }
 
   const getInitialData = async () => {
@@ -56,19 +78,17 @@ export const App = () => {
     }
   }
 
-  const handleClick = () => { 
-    handleCurrentPageUpdate()
-    getInitialData()
-  }
-
   return (
     <div className={css.App}>
       <Searchbar handleSubmit={handleSubmit} handleChange={handleChange} />
+      {clicked && (
+        <Modal alt={alt} src={src} handleClose={handleClose} />
+      )}
       {error && <p>Something went wrong: {error.message}</p>}
       {isLoading && <Loader />}
-      {photos.length > 0 && <ImageGallery photos={photos} />}
+      {photos.length > 0 && <ImageGallery photos={photos} openModal={handleOpen} />}
       {(currentPage > 1 && isLoading === false) ? <Button handleClick={handleClick} /> : <></>}
-      {/* <Modal largeImageURL={} /> */}
+      
     </div>  
   );
 };
