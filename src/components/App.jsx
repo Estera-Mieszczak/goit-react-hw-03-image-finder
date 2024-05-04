@@ -6,17 +6,15 @@ import { Loader } from "./Loader/Loader"
 import { Searchbar } from "./Searchbar/Searchbar";
 import { Modal } from "./Modal/Modal";
 import css from "./App.module.css";
-// import { Modal } from "./Modal/Modal"
 
 
 const apiEndpoint = 'https://pixabay.com/api/?key=42651602-8bf55650de46c7437c76ae15b'
-// const apiKey = '42651602-8bf55650de46c7437c76ae15b'
 
 export const App = () => {
   const [ photos, setPhotos ] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(0)
   const [searchPhoto, setSearchPhoto] = useState('')
   const [clicked, setClicked] = useState(false)
   const [alt, setAlt] = useState()
@@ -35,8 +33,9 @@ export const App = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    setIsLoading(true);
     setPhotos([]);
+   
+    setIsLoading(true);
     getInitialData();
     handleCurrentPageUpdate();
     form.reset()
@@ -45,7 +44,8 @@ export const App = () => {
   const handleChange = (event) => {
     const { value } = event.target
 
-    setSearchPhoto(value)
+    setSearchPhoto(value);
+    setCurrentPage(1)
   }
 
   const handleClick = () => { 
@@ -56,7 +56,7 @@ export const App = () => {
   const handleOpen = event => {
     setClicked(true);
     const alt = event.target.alt;
-    const src = event.target.getAttribute('srcset');
+    const src = event.target.getAttribute('srcSet');
     setAlt(alt);
     setSrc(src);
   };
@@ -69,7 +69,6 @@ export const App = () => {
     try {
       const response = await fetch(`${apiEndpoint}&page=${currentPage}&per_page=12&q=${searchPhoto}`)
       const photos = await response.json()
-      console.log(photos.hits)
       setPhotos((prev) => [...prev, ...photos.hits]) 
     } catch (error) {
       setError(error)

@@ -6,15 +6,15 @@ export const Searchbar = ({ handleSubmit, handleChange }) => {
         <header className="Searchbar">
             <form className="SearchForm" onSubmit={handleSubmit}>
                 <button type="submit" className="SearchForm-button">
-                    <span class="SearchForm-button-label">Search</span>
+                    <span className="SearchForm-button-label">Search</span>
                 </button>
 
                 <input
                     onChange={handleChange}
                     className="SearchForm-input"
                     type="text"
-                    autocomplete="off"
-                    autofocus
+                    autoComplete="off"
+                    autoFocus
                     placeholder="Search images and photos"
                 />
             </form>
